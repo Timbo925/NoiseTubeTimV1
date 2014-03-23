@@ -17,17 +17,14 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function( req, res) {
-    res.render('index');
-});
+app.get('/', function( req, res) { res.render('index');});
 
 app.get('/users', user.displayAll); // Getting all users from the database
+app.post("/users", user.insert); // Save the Newly created User
 
-// Add a new User
-app.get("/users/new", function (req, res) {res.render("new");});
+app.get("/users/new", function (req, res) {res.render("new");}); // Add a new User
 
-// Save the Newly created User
-app.post("/users", user.insert);
+app.post("/users/create" , user.create); // Creating a new user with all needed information
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
