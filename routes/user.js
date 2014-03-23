@@ -1,4 +1,5 @@
 var db = require('../db');
+var mysql = require('mysql')
 
 /*
  * GET users listing.
@@ -46,10 +47,12 @@ exports.create = function (req, res) {
 
         //Checking if user exist in the database
         free(username,email, function(err) {
+
           if(!err) {
             //Creating user in the database
+            res.status(200);
           } else {
-            console.log("User already exists");
+            console.log("Response free: " + err);
             res.status(500);
           }
         })
@@ -65,12 +68,23 @@ exports.create = function (req, res) {
   })
 }
 
-free = function (username, email, callback) {
+/**
+* Function that will lookup username and email in the database.
+* Fail: callback(error)
+* Success: callback(null)
+*/
+
+exports.free = function (username, email, callback) {
   db.getConnection(function(err, connection) {
     if (!err) {
-      connection.query('select * from User where userName = ? or email = ?', [connection.escape(username), connection.escape(email)], function(err, res) { //connection.escape protects agains mysql injection in all user field
+      var sql = "select * from ?? where ?? = ? or 'email' = ?"; // ? values are protected with connection.escape() to avoid sql injections
+      var inserts = ['User', 'userName', username, email];
+      sql = mysql.format(sql,inserts);
+      console.log("sql querry: " + sql)
+      connection.query(sql, function(err, res) { //connection.escape protects agains mysql injection in all user field
+        console.log("Results form db function free: " + res.length);
         if (!err) {
-          if (res == null) { //User does't exist in the database so account can be made
+          if (res.length == 0) { //User does't exist in the database so account can be made
             callback(null);
           } else {
             callback(new Error("User already exists in the database")); //returns an error to the callback function
