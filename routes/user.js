@@ -8,7 +8,6 @@ var session = require('./session');
  * return json object of the corresponding user with the sessionId
  */
 exports.getUser = function (req, res) {
-  //TODO implemnt function
   db.getConnection( function(err, connection) {
     if (!err) {
       //var id = req.param.id;
@@ -50,7 +49,7 @@ exports.getUser = function (req, res) {
 }
 
 /**
-* @ author Timbo925
+* @author Timbo925
 * Creating a new user
 * Expecting JSON body: username,password,email
 */

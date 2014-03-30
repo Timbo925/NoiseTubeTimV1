@@ -5,7 +5,7 @@ var crypto = require('crypto');
 
 
 /**
-* @Timbo925
+* @author Timbo925
 * function will login a user with the right username and password
 * if successfull returns sessionId in Json format {sessionId: "sessionId"}
 */
@@ -55,6 +55,10 @@ exports.login = function (req, res) {
    }
 }
 
+/**
+* @author Timbo925
+* removes sessionId out of the database
+*/
 exports.logout = function (req, res) {
    var sessionId = req.params.session;
    console.log("SessionId logout: " + sessionId);
