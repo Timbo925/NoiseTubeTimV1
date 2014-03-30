@@ -3,7 +3,8 @@ var express = require('express')
 , mysql = require('mysql')
 , path = require('path')
 , routes = require('./routes')
-, user = require('./routes/user');
+, user = require('./routes/user')
+, session = require('./routes/session');
 
 var app = express();
 // all environments
@@ -17,14 +18,15 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function( req, res) { res.render('index');});
+app.get('/', function( req, res) { res.render("<h1> NoiseTubeApiV01 API</h1>");}); // Testing call response
 
-app.get('/users', user.displayAll); // Getting all users from the database
-app.post("/users", user.insert); // Save the Newly created User
+app.post("/user" , user.create); // Creating a new user with all needed information
+app.get('/user/:session' , user.getUser); // Retreving user from the database based on id. session id needs to be included
 
-app.get("/users/new", function (req, res) {res.render("new");}); // Add a new User
+app.post('/login' , session.login); // Returns session id when login is sucessfull
+app.post('/logout' , session.logout); // Removes all session id's from user out of the database
 
-app.post("/users/create" , user.create); // Creating a new user with all needed information
+
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

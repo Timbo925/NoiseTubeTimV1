@@ -1,40 +1,45 @@
 var db = require('../db');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
+var session = require('./session');
 
 /*
- * GET users listing.
+ * @author Timbo925
+ * return json object of the corresponding user with the sessionId
  */
+exports.getUser = function (req, res) {
+  //TODO implemnt function
+  db.getConnection( function(err, connection) {
+    if (!err) {
+      //var id = req.param.id;
+      var sessionId = req.params.session;
+      console.log("Request SessionId: "+ sessionId)
+      session.getIdBySession(sessionId, function(err, id) { //Checking if user is logged in
+        if (!err) { //session id belongs to user
+          var sql = "select * from User where idUser = ? ";
+          var inserts = [id];
+          sql = mysql.format(sql,inserts);
+          console.log("SQL: " + sql);
+          connection.query(sql, function (err, sqlres) {
+            connection.release();
+            if (err) {
+              res.json(500, "Problem retreiving user from the database");
+            } else {
+              res.json(200, sqlres[0]);
 
-exports.list = function(req, res){
-  res.send("respond with a resource");
-};
-
-exports.displayAll = function (req,res) {
-    db.getConnection(function(err, connection) {
-        if (!err) {
-             connection.query('select * from userTest', function (err, docs) {
-                 res.render('users' , {users: docs});
-            });
-        } else {
-            console.log("Connection error with the database");
+            }
+          })
         }
-    });
-}
-
-exports.insert = function (req, res) {
-    db.getConnection(function(err, connection) {
-        if (!err) {
-            var fname=req.body.fname;
-            var lname=req.body.lname;
-            connection.query('INSERT INTO userTest (fname, lname) VALUES (? , ?);' , [fname, lname], function(err, docs) {
-                if (err) res.json(err);
-                res.redirect('users');
-            });
-        } else {
-            console.log("Connection error with the database");
+        else {
+          res.json(500, "Wrong sessionId for requested user");
+          connection.release();
         }
-    });
+      })
+    } else {
+      res.json(500, "Error connecting to the database");
+      connection.release();
+    }
+  })
 }
 
 /**
@@ -103,6 +108,8 @@ exports.create = function (req, res) {
     }
   })
 }
+
+
 
 /**
 * @ author Timbo925
