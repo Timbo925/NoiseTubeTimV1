@@ -14,6 +14,7 @@ app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
+app.use(express.cookieParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -24,7 +25,7 @@ app.post("/user" , user.create); // Creating a new user with all needed informat
 app.get('/user/:session' , user.getUser); // Retreving user from the database based on id. session id needs to be included
 
 app.post('/login' , session.login); // Returns session id when login is sucessfull
-app.post('/logout' , session.logout); // Removes all session id's from user out of the database
+app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
 
 

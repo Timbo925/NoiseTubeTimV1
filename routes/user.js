@@ -13,6 +13,13 @@ exports.getUser = function (req, res) {
     if (!err) {
       //var id = req.param.id;
       var sessionId = req.params.session;
+      // console.log(req.cookies);
+      // if (req.cookies == null) {
+      //    var sessionId = "Nothing"
+      //    console.log("No cookie with corresponding session ID")
+      // } else {
+      //    var sessionId = req.cookies.sessionId;
+      // }
       console.log("Request SessionId: "+ sessionId)
       session.getIdBySession(sessionId, function(err, id) { //Checking if user is logged in
         if (!err) { //session id belongs to user
