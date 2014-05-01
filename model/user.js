@@ -6,7 +6,7 @@ function User() {
  this.name = "Testing"
 }
 
-User.prototype.findUserBySessionId = function (sessionId, res) {
+User.prototype.findUserBySessionId = function (sessionId, callback) {
  db.getConnection( function(err, connection) {
   if (!err) {
    console.log("Request SessionId: "+ sessionId)
@@ -19,20 +19,20 @@ User.prototype.findUserBySessionId = function (sessionId, res) {
              connection.query(sql, function (err, sqlres) {
               connection.release();
               if (err) {
-               res.json(500, "Problem retreiving user from the database");
+               callback(new Error("Error getting user in findUserBySessionId"))
              } else {
-               res.json(200, sqlres[0]);
+               callback(null, sqlres[0])
              }
            })
            }
            else {
-             res.json(500, "Wrong sessionId for requested user");
              connection.release();
+             callback(new Error("Error getting user in findUserBySessionId"))
            }
          })
        } else {
-         res.json(500, "Error connecting to the database");
          connection.release();
+         callback(new Error("Error getting user in findUserBySessionId"))
        }
      })
 }
