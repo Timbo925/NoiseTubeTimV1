@@ -3,19 +3,16 @@
 function Stats(exp, lvl, amount, time) {
 
    this.exp = exp;
-   //this.exp = 0;
    this.lvl = lvl;
-   //this.lvl = 1;
    this.amount = amount;
-   //this.amount - 0;
    this.time = time;
-   //this.time = 0; //time spend in seconds
 
-   var base = 100; //Base point for each mesurement
-   var expMulti = 400;
-   var expLvlDevider = 0.11;
+   this.base = 100; //Base point for each mesurement
+   this.expMulti = 400;
+   this.expLvlDevider = 0.11;
+}
 
-   this.calculatePoints = function(timeEntry, lat, lng) {
+Stats.prototype.calculatePoints = function(timeEntry, lat, lng) {
       var points = Math.round(base * Math.exp(lvl/(base-(0.8*base))));  // calculation for effective point counting lvl. No multipliers used
       var multiTime = 1+((Math.round(timeEntry/6))/100)                 // 0.01 multiplier for every 10 second.
       if (multiTime > 2) {                                              // Maximum multiplier of 2
@@ -30,7 +27,7 @@ function Stats(exp, lvl, amount, time) {
       return points;
    }
 
-   this.addPoints = function(points) {
+   Stats.prototype.addPoints = function(points) {
       var pointsNeeded = 0;
 
       for (var i=0;i<lvl+1;i++) {
