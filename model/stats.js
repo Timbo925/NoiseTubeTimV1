@@ -41,18 +41,27 @@ Stats.prototype.findByUserId = function (idStats, callback) {
    })
 }
 
-/*
-for (var i=0;i<lvl+1;i++) {
-   pointsNeeded = pointsNeeded + expMulti*Math.exp(lvl*expLvlDevider);
+Stats.prototype.update = function (callback) {
+   db.getConnection( function (err, connection) {
+         if (err) {
+            connection.release();
+            callback(new Error(err))
+         } else {
+            var sql = "UPDATE Stats SET  exp = ?, level = ?, amountMeasurments = ?, totalTime = ? WHERE idStats = ?"
+            var inserts = [this.exp, this.level, this.amountMeasurments, this.totalTime, this.idStats]
+            sql = mysql.format(sql,inserts)
+            console.log("SQL: " + sql)
+            connection.query(sql, function (err, sqlres) {
+               connection.release()
+               if (err) {
+                  callback(new Error(err))
+               } else {
+                  callback(null)
+               }
+            })
+         }
+   })
 }
-
-this.base = 100; //Base point for each mesurement
-this.expMulti = 400;
-this.expLvlDevider = 0.11;
-
-var points = Math.round(base * Math.exp(lvl/(base-(0.8*base))));  // calculation for effective point counting lvl. No multipliers used
-
-*/
 
 
 //Export the class

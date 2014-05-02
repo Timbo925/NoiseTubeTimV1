@@ -26,9 +26,14 @@ function postResult(sessionId, callback) { //TODO parss dbList and location List
                callback(new Error(err))
             } else {
                this.stats = stats2
-               //TODO Calcuating the points to set this function
-               points.calculate(stats)
-               callback(null)
+               this.stats = points.calculate(stats)
+               stats.update(function (err) {
+                  if (err) {
+                     callback(err)
+                  } else {
+                     callback(null)
+                  }
+               })
             }
          });
       }

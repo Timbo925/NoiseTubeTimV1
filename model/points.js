@@ -16,18 +16,36 @@ function Points () {
 *
 */
 Points.prototype.calculate = function(stats) {
-	nextLvl = this.calculatePointNextLevel(stats.level);
+	console.log("BEFORE -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
+
 
 	base = 100; 			// Base point for each mesurement
-	this.post();
+	this.post();			// Post the measurments to the NoiseTube server
 	this.multi_place = this.calculateMultiPlace();
 	this.multi_time = this.calculateMultiTime();
 
-	this.points = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-	this.points = this.points * this.multi_place * this.multi_time
-	console.log("Points Calculated: " + this.points)
+	basePoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
+	basePoints = basePoints * this.multi_place * this.multi_time //Amount of point earned
+	console.log("Points Calculated: " + basePoints)
 
+	stats.exp += basePoints
+
+	this.levelUp(stats, this)
+
+	console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
+	return stats
 };
+
+Points.prototype.levelUp = function(stats, pointObj) {
+	nextLvl = pointObj.calculatePointNextLevel(stats.level);
+	console.log("Next Level: " + nextLvl)
+	if (stats.exp > nextLvl) {
+		stats.level++
+		arguments.callee(stats, pointObj)
+		return true;
+	}
+	return false;
+}
 
 Points.prototype.post = function(dbList, locationList) {
 	console.log("TODO post measuerements to noisetube")
@@ -45,11 +63,12 @@ Points.prototype.calculatePointNextLevel = function(lvl) {
 	expLvlDevider = 0.11;
 	expMulti = 400;
 
-	var pointsNeeded;
-	for (var i=0;i<lvl+1;i++) {
-		pointsNeeded = pointsNeeded + this.expMulti*Math.exp(lvl*expLvlDevider);
+	var pointsNeeded = 0;
+	for (var i=1;i<lvl+1;i++) {
+		pointsNeeded += expMulti*Math.exp(lvl*expLvlDevider);
 	}
-	return pointsNeeded;
+
+	return Math.round(pointsNeeded);
 }
 
 module.exports = Points;
