@@ -3,7 +3,7 @@
 *
 */
 function Points () {
-	this.points = 200;
+	this.points = 100;
 	this.multi_place = 1;
 	this.multi_time = 1;
 	this.multi_special = 1;
@@ -24,11 +24,12 @@ Points.prototype.calculate = function(stats) {
 	this.multi_place = this.calculateMultiPlace();
 	this.multi_time = this.calculateMultiTime();
 
-	basePoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-	basePoints = basePoints * this.multi_place * this.multi_time //Amount of point earned
-	console.log("Points Calculated: " + basePoints)
+	totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
+	totalPoints = totalPoints * this.multi_place * this.multi_time //Amount of point earned
+	console.log("Points Calculated: " + totalPoints)
 
-	stats.exp += basePoints
+	stats.exp += totalPoints
+	stats.amountMeasurments++
 
 	this.levelUp(stats, this)
 
@@ -52,7 +53,7 @@ Points.prototype.post = function(dbList, locationList) {
 }
 
 Points.prototype.calculateMultiPlace = function (locationList) {
-	return this.multi_place*2;
+	return this.multi_place;
 }
 
 Points.prototype.calculateMultiTime = function (time) {

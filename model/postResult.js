@@ -20,13 +20,14 @@ function postResult(sessionId, callback) { //TODO parss dbList and location List
       if (err) {
          callback(new Error(err))
       } else {
-         this.user = user2
+         user = user2
          stats.findByUserId(user.Stats_idStats, function (err, stats2) {
             if (err) {
                callback(new Error(err))
             } else {
-               this.stats = stats2
-               this.stats = points.calculate(stats)
+               console.log("stats2: "+ stats2.idStats)
+               stats = stats2
+               stats = points.calculate(stats)
                stats.update(function (err) {
                   if (err) {
                      callback(err)
