@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var db = require('../db')
 
 //Constructor
-function Stats(exp, lvl, amount, time) {
+function Stats() {
 
    this.idStats = 0;
    this.exp = 0;
@@ -40,6 +40,7 @@ Stats.prototype.findByUserId = function (idStats, callback) {
       }
    })
 }
+
 /*
 for (var i=0;i<lvl+1;i++) {
    pointsNeeded = pointsNeeded + expMulti*Math.exp(lvl*expLvlDevider);

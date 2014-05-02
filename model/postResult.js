@@ -3,17 +3,19 @@ var db = require('../db')
 var session = require('../routes/session')
 var User = require('../model/user')
 var Stats = require('../model/stats')
+var Points = require('../model/points')
 
 /**
 * returns callback(err, this)
 * If no error then the user object in initialized
 **/
-function postResult(sessionId, callback) {
+function postResult(sessionId, callback) { //TODO parss dbList and location List
    dbList = []; //array list of all the db measurements
-   locationList = [] //coresponding
-   time = 0;
+   locationList = [] //coresponding loation list for every dbList entry
+   time = 0; // Totat time of the session
    user = new User();
    stats = new Stats();
+   points = new Points();
    user.findUserBySessionId(sessionId, function (err, user2) {
       if (err) {
          callback(new Error(err))
@@ -24,6 +26,8 @@ function postResult(sessionId, callback) {
                callback(new Error(err))
             } else {
                this.stats = stats2
+               //TODO Calcuating the points to set this function
+               points.calculate(stats)
                callback(null)
             }
          });
