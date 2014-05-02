@@ -17,13 +17,12 @@ function User() {
 **/
 User.prototype.findUserBySessionId = function (sessionId, callback) {
    var user = this;
-   console.log(user.userName);
    db.getConnection( function(err, connection) {
       if (!err) {
          console.log("Requesting user with SessionId: "+ sessionId)
          session.getIdBySession(sessionId, function(err, id) { //Checking if user is logged in
             if (!err) { //session id belongs to user
-               var sql = "select * from User where idUser = ? ";
+               var sql = "SELECT * FROM User WHERE idUser = ? ";
                var inserts = [id];
                sql = mysql.format(sql,inserts);
                console.log("SQL: " + sql);

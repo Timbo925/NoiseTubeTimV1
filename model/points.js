@@ -7,7 +7,7 @@ function Points () {
 };
 
 Points.prototype.calculate = function(stats) {
-	
+
 };
 
 module.exports = Points;

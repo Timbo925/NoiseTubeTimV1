@@ -4,7 +4,8 @@ var express = require('express')
 , path = require('path')
 , routes = require('./routes')
 , user = require('./routes/user')
-, session = require('./routes/session');
+, session = require('./routes/session')
+, result = require('./routes/result.js');
 
 var app = express();
 // all environments
@@ -27,6 +28,7 @@ app.get('/user/:session' , user.getUser); // Retreving user from the database ba
 app.post('/login' , session.login); // Returns session id when login is sucessfull
 app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
+app.get('/result/:session', result.new)
 
 
 http.createServer(app).listen(app.get('port'), function(){

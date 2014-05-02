@@ -12,13 +12,7 @@ exports.getUser = function (req, res) {
    var sessionId = req.params.session;
    var u = new user();
    u.findUserBySessionId(sessionId, function (err, user) {
-      if(!err) {
-         //console.log(user)
-         res.json(200,user);
-
-      } else {
-         res.json(500,err)
-      }
+      (err) ? res.json(500, err) : res.json(200,user);
    })
    console.log("My Username otuside: " + u.userName)
 }

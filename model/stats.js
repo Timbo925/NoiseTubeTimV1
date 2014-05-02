@@ -1,58 +1,58 @@
+var mysql = require('mysql');
+var db = require('../db')
 
 //Constructor
 function Stats(exp, lvl, amount, time) {
 
-   this.exp = exp;
-   this.lvl = lvl;
-   this.amount = amount;
-   this.time = time;
+   this.idStats = 0;
+   this.exp = 0;
+   this.level = 0;
+   this.amountMeasurments = 0;
+   this.totalTime = 0;
 
-   this.base = 100; //Base point for each mesurement
-   this.expMulti = 400;
-   this.expLvlDevider = 0.11;
+
 }
 
-Stats.prototype.calculatePoints = function(timeEntry, lat, lng) {
-      var points = Math.round(base * Math.exp(lvl/(base-(0.8*base))));  // calculation for effective point counting lvl. No multipliers used
-      var multiTime = 1+((Math.round(timeEntry/6))/100)                 // 0.01 multiplier for every 10 second.
-      if (multiTime > 2) {                                              // Maximum multiplier of 2
-         multiTime = 2;
-      }
-      var multiPlace  = 1;                                             // TODO multipier based on good location. This can be used for 'events' to organize measuring
-      // better and boos community feeling
-
-      points = points * multiPlace * multiTime;
-      points = Math.round(points);
-      console.log("Adding points:" + points);
-      return points;
-   }
-
-   Stats.prototype.addPoints = function(points) {
-      var pointsNeeded = 0;
-
-      for (var i=0;i<lvl+1;i++) {
-         pointsNeeded = pointsNeeded + expMulti*Math.exp(lvl*expLvlDevider);
-      }
-      exp = exp + points;
-      this.exp = exp;                     // Update new exp points
-      amount = amount + 1;
-      this.amount = amount;              // Adding new measurment amount
-      console.log("Amount: " + amount);
-      console.log("New exp: " + exp);
-      if (exp > pointsNeeded) {
-         lvl = lvl + 1;
-         this.lvl = lvl;                 // Leveling up because over the next limit
-         return true;
+Stats.prototype.findByUserId = function (idStats, callback) {
+   var stats = this;
+   db.getConnection( function (err, connection) {
+      if (err) {
+         conncection.release();
+         callback(new Error(err));
       } else {
-         return false;
+         var sql = "SELECT * FROM Stats WHERE idStats = ?"
+         var inserts = [idStats]
+         sql = mysql.format(sql,inserts)
+         console.log("SQL: " + sql)
+         connection.query(sql, function (err, sqlres) {
+            if (err) {
+               callback(new Error(err))
+            } else {
+               sqlres = sqlres[0]
+               stats.idStats = sqlres.idStats;
+               stats.exp = sqlres.exp;
+               stats.level = sqlres.level;
+               stats.amountMeasurments = sqlres.amountMeasurments;
+               stats.totalTime = sqlres.totalTime;
+               callback(null , stats)
+            }
+         })
       }
-   }
+   })
+}
+/*
+for (var i=0;i<lvl+1;i++) {
+   pointsNeeded = pointsNeeded + expMulti*Math.exp(lvl*expLvlDevider);
 }
 
-//Class Method
-Stats.prototype.newEntry = function(timeEntry, lat, lng) {
-   this.addPoints(this.calculatePoints(timeEntry, lat, lng));
-}
+this.base = 100; //Base point for each mesurement
+this.expMulti = 400;
+this.expLvlDevider = 0.11;
+
+var points = Math.round(base * Math.exp(lvl/(base-(0.8*base))));  // calculation for effective point counting lvl. No multipliers used
+
+*/
+
 
 //Export the class
 module.exports = Stats;
