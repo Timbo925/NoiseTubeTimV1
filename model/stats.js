@@ -45,23 +45,23 @@ Stats.prototype.findByUserId = function (idStats, callback) {
 Stats.prototype.update = function (callback) {
    var stats = this;
    db.getConnection( function (err, connection) {
-         if (err) {
-            connection.release();
-            callback(new Error(err))
-         } else {
-            var sql = "UPDATE Stats SET  exp = ?, level = ?, amountMeasurments = ?, totalTime = ? WHERE idStats = ?"
-            var inserts = [stats.exp, stats.level, stats.amountMeasurments, stats.totalTime, stats.idStats]
-            sql = mysql.format(sql,inserts)
-            console.log("SQL: " + sql)
-            connection.query(sql, function (err, sqlres) {
-               connection.release()
-               if (err) {
-                  callback(new Error(err))
-               } else {
-                  callback(null)
-               }
-            })
-         }
+      if (err) {
+         connection.release();
+         callback(new Error(err))
+      } else {
+         var sql = "UPDATE Stats SET  exp = ?, level = ?, amountMeasurments = ?, totalTime = ? WHERE idStats = ?"
+         var inserts = [stats.exp, stats.level, stats.amountMeasurments, stats.totalTime, stats.idStats]
+         sql = mysql.format(sql,inserts)
+         console.log("SQL: " + sql)
+         connection.query(sql, function (err, sqlres) {
+            connection.release()
+            if (err) {
+               callback(new Error(err))
+            } else {
+               callback(null)
+            }
+         })
+      }
    })
 }
 

@@ -1,3 +1,6 @@
+var mysql = require('mysql');
+var db = require('../db')
+
 /**
 * Points will be returnd to the application trough the API to indicate the amount of points given for the measuremnt
 *
@@ -15,26 +18,49 @@ function Points () {
 * Based on the statistics will calculate the correct points and will return this object
 *
 */
-Points.prototype.calculate = function(stats) {
+Points.prototype.calculate = function(stats, callback) {
+	var point = this;
 	console.log("BEFORE -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
 
 
 	base = 100; 			// Base point for each mesurement
-	this.post();			// Post the measurments to the NoiseTube server
-	this.multi_place = this.calculateMultiPlace();
-	this.multi_time = this.calculateMultiTime();
+	point.post();			// Post the measurments to the NoiseTube server
 
-	totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-	totalPoints = totalPoints * this.multi_place * this.multi_time //Amount of point earned
-	console.log("Points Calculated: " + totalPoints)
+	point.calculateMultiPlace(null, function (err, result) {
+		if (err) {
+			point.multi_place = 1;
+			point.multi_time = point.calculateMultiTime();
 
-	stats.exp += totalPoints
-	stats.amountMeasurments++
+			totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
+			totalPoints = totalPoints * point.multi_place * point.multi_time //Amount of point earned
+			console.log("Points Calculated: " + totalPoints)
 
-	this.levelUp(stats, this)
+			stats.exp += totalPoints
+			stats.amountMeasurments++
 
-	console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
-	return stats
+			point.levelUp(stats, point)
+
+			console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
+			callback(null, stats)
+		} else {
+			point.multi_place += result.bonusMulti;
+			base += result.bonusPoints
+			point.points = base
+			point.multi_time = point.calculateMultiTime();
+
+			totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
+			totalPoints = totalPoints * point.multi_place * point.multi_time //Amount of point earned
+			console.log("Points Calculated: " + totalPoints)
+
+			stats.exp += totalPoints
+			stats.amountMeasurments++
+
+			point.levelUp(stats, point)
+
+			console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
+			callback(null, stats)
+		}
+	})
 };
 
 Points.prototype.levelUp = function(stats, pointObj) {
@@ -49,11 +75,33 @@ Points.prototype.levelUp = function(stats, pointObj) {
 }
 
 Points.prototype.post = function(dbList, locationList) {
+
 	console.log("TODO post measuerements to noisetube")
 }
 
-Points.prototype.calculateMultiPlace = function (locationList) {
-	return this.multi_place;
+Points.prototype.calculateMultiPlace = function (locationList, callback) {
+	var point = this;
+	db.getConnection( function (err, connection) {
+		if (err) {
+			conncection.release();
+			callback(null, 1)
+		} else {
+			var sql = "SELECT idPoi, name, position, description, bonusPoints, bonusMulti, radious,units * DEGREES( ACOS(COS(RADIANS(latpoint))* COS(RADIANS(X(`position`)))* COS(RADIANS(longpoint) - RADIANS(Y(`position`)))+ SIN(RADIANS(latpoint))* SIN(RADIANS(X(`position`))))) AS distance FROM Poi JOIN ( SELECT ?  AS latpoint, ?  AS longpoint,  111.054 AS units) AS p ON (1=1) WHERE MbrContains(GeomFromText ( CONCAT('LINESTRING(',latpoint-(radious/units),' ',	longpoint-(radious/(units* COS(RADIANS(latpoint)))),',',latpoint+(radious/units) ,' ',longpoint+(radious /(units * COS(RADIANS(latpoint)))),')')),  `position`)";
+			var inserts = [50.8637829, 4.418763]
+			sql = mysql.format(sql,inserts)
+			console.log("SQL: " + sql)
+			connection.query(sql, function (err, sqlres) {
+				connection.release()
+				if (err) {
+					callback(null, 1)
+					//callback(new Error(err))
+				} else {
+					console.log("Location Bonus" + sqlres[0])
+					callback(null, sqlres[0])
+				}
+			})
+		}
+	})
 }
 
 Points.prototype.calculateMultiTime = function (time) {
