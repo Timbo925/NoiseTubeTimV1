@@ -5,7 +5,9 @@ var express = require('express')
 , routes = require('./routes')
 , user = require('./routes/user')
 , session = require('./routes/session')
-, result = require('./routes/result.js');
+, result = require('./routes/result.js')
+, leaderboard = require('./routes/leaderboard.js')
+, test = require('./routes/test');
 
 var app = express();
 // all environments
@@ -20,7 +22,7 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', function( req, res) { res.render("<h1> NoiseTubeApiV01 API</h1>");}); // Testing call response
+app.get('/', test.multi); // Testing call response
 
 app.post("/user" , user.create); // Creating a new user with all needed information
 app.get('/user/:session' , user.getUser); // Retreving user from the database based on id. session id needs to be included
@@ -32,6 +34,7 @@ app.get('/logout/:session' , session.logout); // Removes all session id's from u
 
 app.get('/result/:session', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
 
+app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

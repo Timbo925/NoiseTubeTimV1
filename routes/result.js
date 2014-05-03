@@ -1,7 +1,5 @@
 var postResult = require('../model/postResult')
 
-
-
 exports.new = function (req, res) {
    var sessionId = req.params.session;
    var dbList = req.body.dbList
