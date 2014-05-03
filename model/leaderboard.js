@@ -31,15 +31,23 @@ leaderboard.prototype.get = function get(sessionId, type, callback) { //TODO par
 }
 
 leaderboard.prototype.find = function find(user, type, callback) {
-   var around = 5
+   var spread = 5 // How many users scores are shared around the user itselve
 
    db.getConnection( function (err, connection) {
       if (err) {
          connection.release();
          callback(new Error(err))
       } else {
-         var sql = "SELECT @rank:= 0; SELECT @myrank := (SELECT rank FROM (SELECT d.* FROM (SELECT @rank:= @rank + 1 as rank , s.* FROM (SELECT * FROM Stats s ORDER BY ? DESC) s) d) f WHERE idStats = ?); SELECT @rank2:= 0; SELECT g.*, u.userName FROM (SELECT f.* FROM (SELECT d.* FROM (SELECT @rank2:= @rank2 + 1 as rank , s.* FROM (SELECT * FROM Stats s ORDER BY ? DESC) s) d) f WHERE rank BETWEEN IF(@myrank < ?, 0, @myrank - ? )  AND IF(@myrank < ?, ?, @myrank + ? )) g INNER JOIN `User` u ON g.`idStats` = u.`Stats_idStats`  ;"
-         var inserts = ["s." + type ,user.Stats_idStats, around, "s." + type, around, around, around*2, around ]
+         order = "DESC"
+         // if (type == "amountMeasurments") { //Depending on the type the ordering of the query needs to be changed
+         //    order = "ASC"
+         // } else {
+         //    order = "DESC"
+         // }
+         var sql = "SELECT @rank:= 0; SELECT @myrank := (SELECT rank FROM (SELECT d.* FROM (SELECT @rank:= @rank + 1 as rank , s.* FROM (SELECT * FROM Stats s ORDER BY ?? " + order
+         +  ") s) d) f WHERE idStats = ?); SELECT @rank2:= 0; SELECT g.*, u.userName FROM (SELECT f.* FROM (SELECT d.* FROM (SELECT @rank2:= @rank2 + 1 as rank , s.* FROM (SELECT * FROM Stats s ORDER BY ?? " + order
+         +  ") s) d) f WHERE rank BETWEEN IF(@myrank < ?, 0, @myrank - ? )  AND IF(@myrank < ?, ?, @myrank + ? )) g INNER JOIN `User` u ON g.`idStats` = u.`Stats_idStats`  ;"
+         var inserts = [type ,user.Stats_idStats, type,spread, spread, spread ,spread*2, spread ]
          sql = mysql.format(sql,inserts)
          console.log("SQL: " + sql)
          connection.query(sql, function (err, sqlres) {
