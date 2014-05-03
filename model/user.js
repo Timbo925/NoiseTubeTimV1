@@ -11,6 +11,27 @@ function User() {
    this.enabled = 0;
 }
 
+
+User.prototype.findStatsByUserId = function (user, callback) {
+   db.getConnection ( function (err, connection) {
+      if (err) {
+         connection.release()
+         callback(new Error(err))
+      } else {
+         var sql = "SELECT * FROM Stats WHERE idStats = ?"
+         var inserts = [user.Stats_idStats]
+         sql = mysql.format(sql,inserts)
+         console.log("SQL: " + sql)
+         connection.query(sql, function (err, sqlres) {
+            if (err) {
+               callback(new Error(err))
+            } else {
+               callback(null, sqlres[0])
+            }
+         })
+      }
+   })
+}
 /**
 * callback(error, user)
 *

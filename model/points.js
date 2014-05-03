@@ -18,7 +18,7 @@ function Points () {
 * Based on the statistics will calculate the correct points and will return this object
 *
 */
-Points.prototype.calculate = function(stats, callback) {
+Points.prototype.calculate = function(stats, dbList, locationList, time, callback) {
 	var point = this;
 	console.log("BEFORE -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
 
@@ -26,7 +26,7 @@ Points.prototype.calculate = function(stats, callback) {
 	base = 100; 			// Base point for each mesurement
 	point.post();			// Post the measurments to the NoiseTube server
 
-	point.calculateMultiPlace(null, function (err, result) {
+	point.calculateMultiPlace(locationList, function (err, result) {
 		if (err) {
 			point.multi_place = 1;
 			point.multi_time = point.calculateMultiTime();

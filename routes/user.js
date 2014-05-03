@@ -27,3 +27,17 @@ exports.create = function (req, res) {
    var u = new user();
    u.create(req.body.username, req.body.password, req.body.email, res);
 }
+
+exports.getUserStats = function (req, res) {
+   var sessionId = req.params.session;
+   var u = new user();
+   u.findUserBySessionId(sessionId, function (err, user) {
+      if (err) {
+         res.json(500,err)
+      } else {
+         user.findStatsByUserId(user, function (err, stats) {
+            (err) ? res.json(500, err) : res.json(200,stats)
+         })
+      }
+   })
+}
