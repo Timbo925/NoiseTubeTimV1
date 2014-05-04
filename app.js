@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', test.multi); // Testing call response
 
-app.post("/user" , user.create); // Creating a new user with all needed information
+app.post("/user/create" , user.create); // Creating a new user with all needed information
 app.get('/user/:session' , user.getUser); // Retreving user from the database based on id. session id needs to be included
 
 app.get('/stats/:session', user.getUserStats) // Retreving user stas from the db corresponding to the session id
@@ -32,7 +32,7 @@ app.get('/stats/:session', user.getUserStats) // Retreving user stas from the db
 app.post('/login' , session.login); // Returns session id when login is sucessfull
 app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
-app.get('/result/:session', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
+app.post('/result/:session', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
 
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 

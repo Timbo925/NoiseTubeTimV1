@@ -5,6 +5,9 @@ exports.new = function (req, res) {
    var dbList = req.body.dbList
    var locationList = req.body.locationList
    var time = req.body.time
+   console.log("dbList: " + dbList)
+   console.log('locationList: ' + locationList)
+   console.log('time: ' + time)
    postResult(sessionId, dbList, locationList, time, function (err) {
       if (err) {
          res.json (500, err)
