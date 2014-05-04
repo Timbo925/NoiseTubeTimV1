@@ -52,11 +52,14 @@ Points.prototype.calculate = function(stats, dbList, locationList, time, callbac
 			point.multi_time = point.calculateMultiTime();
 
 			totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-			totalPoints = totalPoints * point.multi_place * point.multi_time //Amount of point earned
+			totalPoints = Math.round(totalPoints * point.multi_place * point.multi_time) //Amount of point earned
 			console.log("Points Calculated: " + totalPoints)
 
 			stats.exp += totalPoints
 			stats.amountMeasurments++
+			if (stats.maxExp < totalPoints) {
+				stats.maxExp = totalPoints;
+			}
 
 			point.levelUp(stats, point)
 

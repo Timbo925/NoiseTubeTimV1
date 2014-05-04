@@ -35,6 +35,7 @@ Stats.prototype.findByUserId = function (idStats, callback) {
                stats.level = sqlres.level;
                stats.amountMeasurments = sqlres.amountMeasurments;
                stats.totalTime = sqlres.totalTime;
+               stats.maxExp = sqlres.maxExp
                callback(null , stats)
             }
          })
@@ -49,8 +50,8 @@ Stats.prototype.update = function (callback) {
          connection.release();
          callback(new Error(err))
       } else {
-         var sql = "UPDATE Stats SET  exp = ?, level = ?, amountMeasurments = ?, totalTime = ? WHERE idStats = ?"
-         var inserts = [stats.exp, stats.level, stats.amountMeasurments, stats.totalTime, stats.idStats]
+         var sql = "UPDATE Stats SET  exp = ?, level = ?, amountMeasurments = ?, totalTime = ?, maxExp = ? WHERE idStats = ?"
+         var inserts = [stats.exp, stats.level, stats.amountMeasurments, stats.totalTime, stats.maxExp ,stats.idStats]
          sql = mysql.format(sql,inserts)
          console.log("SQL: " + sql)
          connection.query(sql, function (err, sqlres) {
