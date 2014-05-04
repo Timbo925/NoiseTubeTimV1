@@ -43,8 +43,11 @@ Points.prototype.calculate = function(stats, dbList, locationList, time, callbac
 			console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
 			callback(null, stats)
 		} else {
-			point.multi_place += result.bonusMulti;
-			base += result.bonusPoints
+			if (result != null) {
+				console.log("PoiResult: " + result)
+				point.multi_place += result.bonusMulti;
+				base += result.bonusPoints
+			}
 			point.points = base
 			point.multi_time = point.calculateMultiTime();
 
@@ -87,17 +90,23 @@ Points.prototype.calculateMultiPlace = function (locationList, callback) {
 			callback(null, 1)
 		} else {
 			var sql = "SELECT idPoi, name, position, description, bonusPoints, bonusMulti, radious,units * DEGREES( ACOS(COS(RADIANS(latpoint))* COS(RADIANS(X(`position`)))* COS(RADIANS(longpoint) - RADIANS(Y(`position`)))+ SIN(RADIANS(latpoint))* SIN(RADIANS(X(`position`))))) AS distance FROM Poi JOIN ( SELECT ?  AS latpoint, ?  AS longpoint,  111.054 AS units) AS p ON (1=1) WHERE MbrContains(GeomFromText ( CONCAT('LINESTRING(',latpoint-(radious/units),' ',	longpoint-(radious/(units* COS(RADIANS(latpoint)))),',',latpoint+(radious/units) ,' ',longpoint+(radious /(units * COS(RADIANS(latpoint)))),')')),  `position`)";
-			var inserts = [50.8637829, 4.418763]
+			//var inserts = [50.8637829, 4.418763]
+			var inserts = [locationList[0][0], locationList[0][1]] //Use the start location to calculate the possible bonus
 			sql = mysql.format(sql,inserts)
 			console.log("SQL: " + sql)
 			connection.query(sql, function (err, sqlres) {
 				connection.release()
 				if (err) {
-					callback(null, 1)
+					callback(null)
 					//callback(new Error(err))
 				} else {
-					console.log("Location Bonus" + sqlres[0])
-					callback(null, sqlres[0])
+					console.log("Location Bonus: " + sqlres[0].bonusMulti)
+					console.log("Length: " + sqlres.length )
+					if (sqlres.length == 0) {
+						callback(null, null)
+					} else {
+						callback(null, sqlres[0])
+					}
 				}
 			})
 		}

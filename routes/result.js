@@ -6,7 +6,7 @@ exports.new = function (req, res) {
    var locationList = req.body.locationList
    var time = req.body.time
    console.log("dbList: " + dbList)
-   console.log('locationList: ' + locationList)
+   console.log('locationList: ' + locationList[0])
    console.log('time: ' + time)
    postResult(sessionId, dbList, locationList, time, function (err) {
       if (err) {
