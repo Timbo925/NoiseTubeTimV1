@@ -7,7 +7,8 @@ var express = require('express')
 , session = require('./routes/session')
 , result = require('./routes/result.js')
 , leaderboard = require('./routes/leaderboard.js')
-, test = require('./routes/test');
+, test = require('./routes/test')
+, poi = require('./routes/poi');
 
 var app = express();
 // all environments
@@ -35,6 +36,8 @@ app.get('/logout/:session' , session.logout); // Removes all session id's from u
 app.post('/result/:session', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
 
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
+
+app.get('/poi/:lat/:lon/:r', poi.getList) // Retieves list of all poit of intrests in radius
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
