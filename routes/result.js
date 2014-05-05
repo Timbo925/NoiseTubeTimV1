@@ -5,10 +5,12 @@ exports.new = function (req, res) {
    var dbList = req.body.dbList
    var locationList = req.body.locationList
    var time = req.body.time
-   console.log("dbList: " + dbList)
-   console.log('locationList: ' + locationList[0])
-   console.log('time: ' + time)
-   postResult(sessionId, dbList, locationList, time, function (err) {
+   //var bonuspoints = req.body.bonuspoints
+   //var multiplicationPoi = req.body.multiplicationPoi
+   //var second = req.params.second
+
+   console.log("Request: " + req)
+   postResult(req, function (err) {
       if (err) {
          res.json (500, err)
       } else {

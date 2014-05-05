@@ -9,11 +9,11 @@ var Points = require('../model/points')
 * returns callback(err, this)
 * If no error then the user object in initialized
 **/
-function postResult(sessionId, dbList, locationList, time, callback) { //TODO parss dbList and location List
+function postResult(req, callback) {
    user = new User();
    stats = new Stats();
    points = new Points();
-   user.findUserBySessionId(sessionId, function (err, user2) {
+   user.findUserBySessionId(req.params.session, function (err, user2) {
       if (err) {
          callback(new Error(err))
       } else {
@@ -23,7 +23,7 @@ function postResult(sessionId, dbList, locationList, time, callback) { //TODO pa
                callback(new Error(err))
             } else {
                stats = stats2
-               points.calculate(stats, dbList, locationList, time, function (err, stats) {
+               points.calculate(stats, req, function (err, stats) {
                   stats.update(function (err) {
                      if (err) {
                         callback(err)

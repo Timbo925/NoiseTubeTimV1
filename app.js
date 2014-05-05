@@ -33,7 +33,7 @@ app.get('/stats/:session', user.getUserStats) // Retreving user stas from the db
 app.post('/login' , session.login); // Returns session id when login is sucessfull
 app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
-app.post('/result/:session', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
+app.post('/result/:session/:second', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
 
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 
