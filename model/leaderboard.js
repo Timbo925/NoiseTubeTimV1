@@ -31,7 +31,7 @@ leaderboard.prototype.get = function get(sessionId, type, callback) { //TODO par
 }
 
 leaderboard.prototype.find = function find(user, type, callback) {
-   var spread = 5 // How many users scores are shared around the user itselve
+   var spread = 20 // How many users scores are shared around the user itselve
 
    db.getConnection( function (err, connection) {
       if (err) {
