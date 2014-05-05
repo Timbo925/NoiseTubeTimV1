@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 var db = require('../db')
 var session = require('../routes/session');
+var bcrypt = require('bcrypt');
 
 function User() {
    this.idUser = 0;
@@ -79,7 +80,7 @@ User.prototype.create = function(username, password, email, res) {
    db.getConnection(function(err, connection) {
       if(!err) {
          if (username && password && email) {
-            console.log("Creating account with: " + JSON.stringify(req.body));
+            //console.log("Creating account with: " + JSON.stringify(req.body));
             //Checking if user exist in the database
             free(username,email, function(err) {
                if(!err) {
