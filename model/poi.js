@@ -1,6 +1,8 @@
 var db = require('../db');
 var mysql = require('mysql');
 
+
+
 exports.getPoiList = function (lat,lon,callback) {
    db.getConnection( function (err, connection) {
       if (err) {

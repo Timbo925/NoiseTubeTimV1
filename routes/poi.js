@@ -11,6 +11,22 @@ exports.getList = function (req, res) {
          if (err) {
             res.json(500, new Error(err))
          } else {
+
+            //console.log(list[2].position)
+            for (var i = 0; i<list.length; i++) {
+               var locList = []
+               if (list[i].type == "AREA") {
+                  for (var j=0; j<list[i].position[0].length; j++) {
+                     locList.push(list[i].position[0][j].x)
+                     locList.push(list[i].position[0][j].y)
+                  }
+               } else {
+                  locList.push(list[i].position.x)
+                  locList.push(list[i].position.y)
+               }
+               list[i].position = locList;
+               list[i].distance = Math.round(list[i].distance*100) / 100
+            }
             res.json(200, list)
          }
       })
