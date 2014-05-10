@@ -21,85 +21,49 @@ function Points () {
 Points.prototype.calculate = function(stats, req, callback) {
 	var point = this;
 	console.log("BEFORE -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
-	console.log("Request Post: " + req.body.dbList)
+	console.log("Request Post: " + req.body.pointMeasurement)
+
+	var pointMeasurement = req.body.pointMeasurement;
+	console.log(pointMeasurement)
+	console.log(stats)
+	//var baseSecond = req.params.second;
 
 	point.post();			// Post the measurments to the NoiseTube server
 
-	baseSecond = req.params.second
+	//totalPoints = req.body.dbList.length/baseSecond      //Our basis is based on 1 point each second
+	totalPoints = pointMeasurement.totalPoints;
+	point.multi_place = pointMeasurement.locationMultiplier;
 
-	totalPoints = req.body.dbList.length/baseSecond      //Our basis is based on 1 point each second
-
-	if (req.body.bonuspoints != null) {
-		for (var i=0; i<req.body.bonuspoints.length; i++) {  //Adding points for good measurements
-			totalPoints += req.body.bonuspoints[i]
-			console.log("Add Bonus ctr: " + i)
-		}
-	}
+	// if (req.body.bonuspoints != null) {
+	// 	for (var i=0; i<req.body.bonuspoints.length; i++) {  //Adding points for good measurements
+	// 		totalPoints += req.body.bonuspoints[i]
+	// 		console.log("Add Bonus ctr: " + i)
+	// 	}
+	// }
 
 	point.points = totalPoints;
 
-	if(req.body.multiplication != null) {
-		for (i=0; i<req.body.multiplication.length; i++) {
-			console.log("Add Multi ctr: " + i)
-			point.multi_place += req.body.multiplication[i]
-		}
-	}
+	// if(req.body.multiplication != null) {
+	// 	for (i=0; i<req.body.multiplication.length; i++) {
+	// 		console.log("Add Multi ctr: " + i)
+	// 		point.multi_place += req.body.multiplication[i]
+	// 	}
+	// }
 
 	stats.exp += totalPoints;
 	stats.amountMeasurments++;
 
 	point.levelUp(stats, point);  //Set level apropiate with new exp
 
-	console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp + " Total Points: " + totalPoints + " Multi: " + point.multi_place )
+	console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp + " Total Points: " + totalPoints + " Multi: " + point.multi_place)
+	console.log("Points: " + point)
 	callback(null, stats) //Return new stats so they can be saved
-
-	// base = 100; 			// Base point for each mesurement
-	// point.calculateMultiPlace(locationList, function (err, result) {
-	// 	if (err) {
-	// 		point.multi_place = 1;
-	// 		point.multi_time = point.calculateMultiTime();
-	//
-	// 		totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-	// 		totalPoints = totalPoints * point.multi_place * point.multi_time //Amount of point earned
-	// 		console.log("Points Calculated: " + totalPoints)
-	//
-	// 		stats.exp += totalPoints
-	// 		stats.amountMeasurments++
-	//
-	// 		point.levelUp(stats, point)
-	//
-	// 		console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
-	// 		callback(null, stats)
-	// 	} else {
-	// 		if (result != null) {
-	// 			console.log("PoiResult: " + result)
-	// 			point.multi_place += result.bonusMulti;
-	// 			base += result.bonusPoints
-	// 		}
-	// 		point.points = base
-	// 		point.multi_time = point.calculateMultiTime();
-	//
-	// 		totalPoints = Math.round(base * Math.exp(stats.level/(base-(0.8*base))));
-	// 		totalPoints = Math.round(totalPoints * point.multi_place * point.multi_time) //Amount of point earned
-	// 		console.log("Points Calculated: " + totalPoints)
-	//
-	// 		stats.exp += totalPoints
-	// 		stats.amountMeasurments++
-	// 		if (stats.maxExp < totalPoints) {
-	// 			stats.maxExp = totalPoints;
-	// 		}
-	//
-	// 		point.levelUp(stats, point)
-	//
-	// 		console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
-	// 		callback(null, stats)
-	// 	}
-	// })
 };
 
 Points.prototype.levelUp = function(stats, pointObj) {
 	nextLvl = pointObj.calculatePointNextLevel(stats.level);
 	if (stats.exp > nextLvl) {
+		stats.nextLevel = nextLvl;
 		stats.level++
 		arguments.callee(stats, pointObj)
 		return true;
