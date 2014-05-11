@@ -26,32 +26,21 @@ Points.prototype.calculate = function(stats, req, callback) {
 	var pointMeasurement = req.body.pointMeasurement;
 	console.log(pointMeasurement)
 	console.log(stats)
-	//var baseSecond = req.params.second;
 
 	point.post();			// Post the measurments to the NoiseTube server
 
-	//totalPoints = req.body.dbList.length/baseSecond      //Our basis is based on 1 point each second
 	totalPoints = pointMeasurement.totalPoints;
 	point.multi_place = pointMeasurement.locationMultiplier;
 
-	// if (req.body.bonuspoints != null) {
-	// 	for (var i=0; i<req.body.bonuspoints.length; i++) {  //Adding points for good measurements
-	// 		totalPoints += req.body.bonuspoints[i]
-	// 		console.log("Add Bonus ctr: " + i)
-	// 	}
-	// }
 
 	point.points = totalPoints;
 
-	// if(req.body.multiplication != null) {
-	// 	for (i=0; i<req.body.multiplication.length; i++) {
-	// 		console.log("Add Multi ctr: " + i)
-	// 		point.multi_place += req.body.multiplication[i]
-	// 	}
-	// }
-
 	stats.exp += totalPoints;
 	stats.amountMeasurments++;
+
+	if (stats.maxExp < totalPoints) {
+		stats.maxExp = totalPoints;
+	}
 
 	point.levelUp(stats, point);  //Set level apropiate with new exp
 

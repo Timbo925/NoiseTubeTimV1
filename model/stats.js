@@ -11,6 +11,7 @@ function Stats() {
    this.totalTime = 0;
    this.nextLevel = 0;
    this.lastLevel = 0;
+   this.maxExp = 0;
 
 
 }
