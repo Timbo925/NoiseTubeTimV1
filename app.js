@@ -34,6 +34,7 @@ app.post('/login' , session.login); // Returns session id when login is sucessfu
 app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
 app.post('/result/:session/:second', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
+app.post('/result/:session/add/:points' ,result.add) // Ading points to the user without any measuremetns done.
 
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 

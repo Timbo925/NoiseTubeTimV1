@@ -13,6 +13,19 @@ function Points () {
 
 };
 
+Points.prototype.addPoints = function(stats, req, callback) {
+	var point = this;
+	var pointsToAdd = req.params.points;
+   pointsToAdd = parseInt(pointsToAdd);
+	console.log("BEFORE -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp)
+
+	stats.exp += pointsToAdd
+	point.levelUp(stats, point);
+
+	console.log("AFTER -- Stats Lvl: " + stats.level + " Stats exp:" + stats.exp )
+	callback(null, stats);
+}
+
 /**
 * callback(err, this)
 * Based on the statistics will calculate the correct points and will return this object
