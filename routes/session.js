@@ -22,25 +22,29 @@ exports.login = function (req, res) {
             console.log("SQL: " + sql);
             connection.query(sql, function (err , sqlres) {  // Reteiving user from the datbase
                if(!err) {
-                  connection.release();
-                  console.log("Retreived user: " + sqlres);
-                  //res.json(200, sqlres);
-                  console.log("Password hash: " + sqlres[0].password)
-                  //var salt = bcrypt.genSaltSync(10);
-                  //var hash = bcrypt.hashSync(password, salt);
-                  console.log("Hashed password: "+ password);
-                  if (bcrypt.compareSync(password, sqlres[0].password)) {  // Comparing passwords from request with database
-                     newSession(sqlres[0].idUser, function(err, sessionId) { // Generating new sessionId for this user
-                        if(!err) {
-                           console.log("New session created with key: " + sessionId);
-                           //res.cookie('SessionCookie' , sessionId, {maxAge: 9000000, httpOnly: true});
-                           res.json(200, {sessionId: sessionId });
-                        } else {
-                           res.json(500, "Problem creating session")
-                        }
-                     })
+                  if (sqlres.length == 0) {
+                     res.json(500, "User not found")
                   } else {
-                     res.json(500, "Wrong password");
+                     connection.release();
+                     console.log("Retreived user: " + sqlres);
+                     //res.json(200, sqlres);
+                     console.log("Password hash: " + sqlres[0].password)
+                     //var salt = bcrypt.genSaltSync(10);
+                     //var hash = bcrypt.hashSync(password, salt);
+                     console.log("Hashed password: "+ password);
+                     if (bcrypt.compareSync(password, sqlres[0].password)) {  // Comparing passwords from request with database
+                        newSession(sqlres[0].idUser, function(err, sessionId) { // Generating new sessionId for this user
+                           if(!err) {
+                              console.log("New session created with key: " + sessionId);
+                              //res.cookie('SessionCookie' , sessionId, {maxAge: 9000000, httpOnly: true});
+                              res.json(200, {sessionId: sessionId });
+                           } else {
+                              res.json(500, "Problem creating session")
+                           }
+                        })
+                     } else {
+                        res.json(500, "Wrong password");
+                     }
                   }
                }
             })

@@ -8,7 +8,8 @@ var express = require('express')
 , result = require('./routes/result.js')
 , leaderboard = require('./routes/leaderboard.js')
 , test = require('./routes/test')
-, poi = require('./routes/poi');
+, poi = require('./routes/poi')
+, badge = require('./routes/badge');
 
 var app = express();
 // all environments
@@ -30,8 +31,8 @@ app.get('/user/:session' , user.getUser); // Retreving user from the database ba
 
 app.get('/stats/:session', user.getUserStats) // Retreving user stas from the db corresponding to the session id
 
-app.post('/login' , session.login); // Returns session id when login is sucessfull
-app.get('/logout/:session' , session.logout); // Removes all session id's from user out of the database
+app.post('/user/login' , session.login); // Returns session id when login is sucessfull
+app.get('/user/logout/:session' , session.logout); // Removes all session id's from user out of the database
 
 app.post('/result/:session/:second', result.new) // Posting new results to the server, returns updated stats/points earned and pottential badges
 app.post('/result/:session/add/:points' ,result.add) // Ading points to the user without any measuremetns done.
@@ -39,6 +40,10 @@ app.post('/result/:session/add/:points' ,result.add) // Ading points to the user
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 
 app.get('/poi/:lat/:lon/:r', poi.getList) // Retieves list of all poit of intrests in radius
+
+app.get('/badge', badge.getAll) //Retreive all badges belonging to the user
+app.get('/badge/:session', badge.getBadgesUser) //Retreive all badges belonging to the user
+app.post('/badge/:session/:id', badge.addBadge) //Add badge with :id to corresponding user with :session
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));

@@ -3,7 +3,7 @@ var pool = mysql.createPool({
     host : '127.0.0.1',
     user : 'root',
     password : 'warcraft',
-    database : 'NoiseTubeTim',
+    database : 'NT2',
     multipleStatements: true,
     debug: false
     });
@@ -12,7 +12,7 @@ var con = mysql.createConnection({
    host : '127.0.0.1',
    user : 'root',
    password : 'warcraft',
-   database : 'NoiseTubeTim',
+   database : 'NT2',
    multipleStatements: true,
    debug: false
 })
