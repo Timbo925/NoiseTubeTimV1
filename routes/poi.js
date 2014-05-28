@@ -32,3 +32,28 @@ exports.getList = function (req, res) {
       })
    }
 }
+
+exports.add = function (req, res) {
+   var position = req.body.position;
+   var name = req.body.name;
+   var description = req.body.description;
+   var bonusPoints = req.body.bonusPoints;
+   var bonusMulti = req.body.bonusMulti;
+   var radius = req.body.radius;
+
+   console.log("Positions:" + position);
+
+   if (position != null && name != null && description != null && bonusPoints != null && bonusMulti != null && radius != null) {
+         poi.add(position, name , description, bonusPoints, bonusMulti, radius ,function (err, resp) {
+            if (err) {
+               res.json(500, err)
+            } else {
+               res.json(200, resp)
+            }
+         })
+   } else {
+      res.json(500,{"message" : "Wrong Prameters"})
+   }
+
+
+}

@@ -40,6 +40,7 @@ app.post('/result/:session/add/:points' ,result.add) // Ading points to the user
 app.get('/leaderboard/:session/:type', leaderboard.getType) //Retreives leaderboard based on user. type options {level, amountMeasurements, totalTime, maxExp}
 
 app.get('/poi/:lat/:lon/:r', poi.getList) // Retieves list of all poit of intrests in radius
+app.post('/poi', poi.add) // Add new PoI
 
 app.get('/badge', badge.getAll) //Retreive all badges belonging to the user
 app.get('/badge/:session', badge.getBadgesUser) //Retreive all badges belonging to the user

@@ -58,3 +58,58 @@ exports.getPoiListradius = function (lat,lon,r,callback) {
       }
    })
 }
+
+exports.add = function (position, name, description, bonusPoints, bonusMulti, radius, callback) {
+   db.getConnection( function (err, connection) {
+      if (err) {
+         connection.release();
+         callback(new Error(err))
+      } else {
+         if (position.length == 2) {
+            //We have a point type
+            var sql = "INSERT INTO Poi (position,name,description,bonusPoints,bonusMulti,radius,type) VALUES  (GeomFromText('POINT(? ?)'),?,?,?,?,?,?)";
+            var inserts = [position[0], position[0], name, description, bonusPoints, bonusMulti, radius, 'POINT'];
+            sql = mysql.format(sql,inserts);
+            console.log("SQL: " + sql);
+            connection.query(sql, function (err, sqlres) {
+               connection.release();
+               if (err) {
+                  callback(new Error(err));
+               } else {
+                  callback(null, "Saved");
+               }
+            })
+         } else {
+            //POLYGON TYPE
+            if (position[0] == position[position.length-2] && position[1] == position[position.length-1]) {
+               var points = "";
+
+               for (var i = 0; i< position.length; i+=2) {
+                  if (i != 0) {
+                     points += ", ";
+                  }
+                  points += position[i];
+                  points += " ";
+                  points += position[i+1];
+               }
+
+               var sql = "INSERT INTO Poi (position,name,description,bonusPoints,bonusMulti,radius,type) VALUES  (GeomFromText('POLYGON((" + points + "))'),?,?,?,?,?,?)";
+               var inserts = [name, description, bonusPoints, bonusMulti, radius, 'AREA'];
+               sql = mysql.format(sql,inserts);
+               console.log("SQL: " + sql);
+               connection.query(sql, function (err, sqlres) {
+                  connection.release();
+                  if (err) {
+                     callback(new Error(err));
+                  } else {
+                     callback(null, "Saved");
+                  }
+               })
+            } else {
+               callback(new Error("Begin and endpoint are not the same"));
+            }
+
+         }
+      }
+   })
+}
