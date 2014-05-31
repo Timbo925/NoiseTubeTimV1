@@ -25,7 +25,7 @@ exports.getUser = function (req, res) {
 */
 exports.create = function (req, res) {
    var u = new user();
-   u.create(req.body.username, req.body.password, req.body.email, res);
+   u.create(req.body.username, req.body.password, req.body.email,req, res);
 }
 
 exports.getUserStats = function (req, res) {

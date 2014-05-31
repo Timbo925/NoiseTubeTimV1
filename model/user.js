@@ -76,10 +76,10 @@ User.prototype.findUserBySessionId = function (sessionId, callback) {
    })
 }
 
-User.prototype.create = function(username, password, email, res) {
+User.prototype.create = function(username, password, email, req, res) {
    db.getConnection(function(err, connection) {
       if(!err) {
-         if (username && password && email) {
+         if (username && password) {
             //console.log("Creating account with: " + JSON.stringify(req.body));
             //Checking if user exist in the database
             free(username,email, function(err) {
@@ -99,9 +99,12 @@ User.prototype.create = function(username, password, email, res) {
                         connection.query(sql, function (err, sqlres2) {
                            if (!err) {
                               console.log("User created Sucess");
-                              res.json(200);
                               connection.release();
+                              session.login(req,res)
+                              //res.json(200);
+
                            } else {
+                              console.log(err)
                               var sql = "delete * from Stats where idStats = ?";
                               var inserts = [sqlres.insertId];
                               sql = mysql.format(sql,inserts);
@@ -123,7 +126,7 @@ User.prototype.create = function(username, password, email, res) {
                }
             })
          } else {
-            res.json(500, {error:"One body field not used" , json : JSON.stringify(req.body)});
+            res.json(500, {error:"One body field not used"});
             connection.release();
          }
       } else {
